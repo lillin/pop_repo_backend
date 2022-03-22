@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 
-from api.utils.github_api_utils import search_by_repo_name
+from api.utils.github_api_utils import search_by_repo_name, get_by_repo_name
 
 
 class GitHubSearchResultsSerializer(serializers.Serializer):
@@ -26,3 +26,16 @@ class RepoPopularitySearchSerializer(serializers.Serializer):
         search_results_serializer = GitHubSearchResultsSerializer(data=repo_info.get('items', []), many=True)
         search_results_serializer.is_valid(raise_exception=True)
         return {"search_results": search_results_serializer.data, "next_page": next_page}
+
+
+class RepoPopularityByOwnerSerializer(serializers.Serializer):
+    repo = serializers.CharField(required=True, trim_whitespace=True)
+    owner = serializers.CharField(required=True, trim_whitespace=True)
+    result = serializers.SerializerMethodField()
+
+    def get_result(self, attr):
+        repo_info = get_by_repo_name(attr['repo'], attr['owner'])
+        if repo_info:
+            search_results_serializer = GitHubSearchResultsSerializer(data=repo_info)
+            search_results_serializer.is_valid(raise_exception=True)
+            return search_results_serializer.data
