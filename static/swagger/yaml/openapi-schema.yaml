@@ -1,0 +1,134 @@
+openapi: 3.0.2
+
+info:
+  version: '1.0.0'
+  title: 'Repo Popularity API'
+
+paths:
+  /api/repo-popularity:
+    post:
+      operationId: createRepoPopularity
+      description: 'Get Repo Popularity for repositories searched by name.'
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page to Render
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepoPopularityBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepoPopularityResponse'
+          description: ''
+      tags:
+      - api
+  /api/repo-popularity-by-owner:
+    post:
+      operationId: createRepoPopularityByOwner
+      description: "Get Repo Popularity for owner's repository."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepoPopularityByOwnerBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepoPopularityByOwnerResponse'
+          description: ''
+      tags:
+        - api
+
+
+components:
+  schemas:
+    RepoPopularityBody:
+      title: Repo Popularity Request Payload
+      type: object
+      required: [repo]
+      properties:
+        repo:
+          title: Repository Name
+          type: string
+
+    RepoPopularityResult:
+      title: Repo Results
+      type: object
+      required: [search_results, next_page]
+      properties:
+        search_results:
+          title: Search Results
+          type: array
+          items:
+            title: Repo Info
+            type: object
+            properties:
+              name:
+                type: string
+              full_name:
+                type: string
+              is_popular:
+                type: boolean
+        next_page:
+          title: Next Page
+          type: string
+
+    RepoPopularityResponse:
+      title: Repo Popularity Response
+      type: object
+      required: [repo, results]
+      properties:
+        repo:
+          title: Repository Name
+          type: string
+        results:
+          $ref: '#/components/schemas/RepoPopularityResult'
+
+    RepoPopularityByOwnerBody:
+      title: Repo Popularity By Owner Request Payload
+      type: object
+      required: [repo, owner]
+      properties:
+        repo:
+          title: Repository Name
+          type: string
+        owner:
+          title: Repository Owner
+          type: string
+
+    RepoPopularityByOwnerResult:
+      title: Repo Results
+      type: object
+      required: [ name, full_name, is_popular ]
+      properties:
+        name:
+          type: string
+        full_name:
+          type: string
+        is_popular:
+          type: string
+
+    RepoPopularityByOwnerResponse:
+      title: Repo Popularity By Owner Response
+      type: object
+      required: [repo, results]
+      properties:
+        repo:
+          title: Repository Name
+          type: string
+        owner:
+          title: Repository Owner
+          type: string
+        results:
+          $ref: '#/components/schemas/RepoPopularityByOwnerResult'

@@ -9,7 +9,7 @@ def get_next_page(links):
     return next_page['url'].split('=')[-1] if next_page else None
 
 
-def search_by_repo_name(name: str, page: int = 1) -> Tuple[Any, Optional]:
+def search_by_repo_name(name: str, page: int = 1) -> Tuple[Any, Optional[Any]]:
     """
     Searches GitHub repositories by name from the given string.
     """
