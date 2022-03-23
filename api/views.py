@@ -6,7 +6,7 @@ from api.serializers import RepoPopularitySearchSerializer, RepoPopularityByOwne
 
 class RepoPopularitySearchView(APIView):
     def post(self, request):
-        context = {'page': request.query_params.get('page', 1)}
+        context = {'page': request.query_params.get('page')}
         serializer = RepoPopularitySearchSerializer(data=request.data, context=context)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=200)

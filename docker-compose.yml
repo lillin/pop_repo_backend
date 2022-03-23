@@ -1,13 +1,36 @@
-version: "3.9"
-   
+version: "3.8"
+
+x-db-settings: &db-settings
+  POSTGRES_NAME: ${POSTGRES_NAME}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
 services:
+  db:
+    image: "postgres:${POSTGRES_VERSION}"
+    environment:
+      <<: *db-settings
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    restart: always
   web:
     build: .
     command: bash -c "python manage.py migrate &&
                       python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
+    environment:
+      <<: *db-settings
+      DEBUG: ${DEBUG}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
     volumes:
       - .:/opt/project
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  db-volume:
