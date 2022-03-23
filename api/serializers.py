@@ -21,7 +21,7 @@ class RepoPopularitySearchSerializer(serializers.Serializer):
     results = serializers.SerializerMethodField()
 
     def get_results(self, attr):
-        repo_info, next_page = search_by_repo_name(attr['repo'], page=self.context.get('page', 1))
+        repo_info, next_page = search_by_repo_name(attr['repo'], page=self.context.get('page'))
 
         search_results_serializer = GitHubSearchResultsSerializer(data=repo_info.get('items', []), many=True)
         search_results_serializer.is_valid(raise_exception=True)

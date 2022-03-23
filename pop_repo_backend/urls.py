@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("api.urls")),
     path('ht/', include('health_check.urls')),
-    path('docs/', TemplateView.as_view(template_name='swagger/swagger-ui.html'), name='swagger'),
+    path('', TemplateView.as_view(template_name='swagger/swagger-ui.html'), name='swagger'),
 ]
