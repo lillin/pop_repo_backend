@@ -9,7 +9,7 @@ from api.serializers import (
 
 
 REPO_POPULARITY_SEARCH_DATA = [
-    [{'repo': 'hello'},
+    [{'repo': '  hello  '},
      {'page': 3},
      {'repo': 'hello',
       'results': {
@@ -17,10 +17,35 @@ REPO_POPULARITY_SEARCH_DATA = [
           'next_page': '4'}}],
 ]
 
+REPO_POPULARITY_SEARCH_DATA_ERRORS = [
+    [{},
+     {'repo': ['This field is required.']}],
+
+    [{'repo': ''},
+     {'repo': ['This field may not be blank.']}],
+]
 
 REPO_POPULARITY_BY_OWNER = [
-    [{'repo': 'hello', 'owner': 'world'},
+    [{'repo': 'hello', 'owner': '  world  '},
      {'repo': 'hello', 'owner': 'world', 'result': {'name': 'hello', 'full_name': 'world/hello', 'is_popular': True}}],
+]
+
+REPO_POPULARITY_BY_OWNER_ERRORS = [
+    [{},
+     {'repo': ['This field is required.'],
+      'owner': ['This field is required.']}],
+
+    [{'repo': 'hello'},
+     {'owner': ['This field is required.']}],
+
+    [{'owner': 'world'},
+     {'repo': ['This field is required.']}],
+
+    [{'repo': ''},
+     {'repo': ['This field may not be blank.'], 'owner': ['This field is required.']}],
+
+    [{'owner': ''},
+     {'owner': ['This field may not be blank.'], 'repo': ['This field is required.']}],
 ]
 
 
@@ -49,6 +74,13 @@ def test_repo_popularity_search_serializer(mock_get, input_data, context, expect
     assert serializer.data == expected_output
 
 
+@pytest.mark.parametrize('input_data, expected_output', REPO_POPULARITY_SEARCH_DATA_ERRORS)
+def test_repo_popularity_search_serializer_errors(input_data, expected_output):
+    serializer = RepoPopularitySearchSerializer(data=input_data)
+    assert not serializer.is_valid()
+    assert serializer.errors == expected_output
+
+
 @pytest.mark.parametrize('input_data, expected_output', REPO_POPULARITY_BY_OWNER)
 @patch('requests.get')
 def test_repo_popularity_by_owner_serializer(mock_get, input_data, expected_output):
@@ -69,3 +101,11 @@ def test_repo_popularity_by_owner_serializer(mock_get, input_data, expected_outp
 
     assert serializer.is_valid()
     assert serializer.data == expected_output
+
+
+@pytest.mark.parametrize('input_data, expected_output', REPO_POPULARITY_BY_OWNER_ERRORS)
+def test_repo_popularity_by_owner_serializer_errors(input_data, expected_output):
+    serializer = RepoPopularityByOwnerSerializer(data=input_data)
+
+    assert not serializer.is_valid()
+    assert serializer.errors == expected_output
